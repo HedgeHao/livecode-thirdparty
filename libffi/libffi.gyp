@@ -31,6 +31,11 @@
 		[
 			'./include_linux/x86_64',
 		],
+
+		'libffi_public_headers_linux_armv7_dir':
+		[
+			'./include_linux/armv7',
+		],
 		
 		'libffi_public_headers_android_dir':
 		[
@@ -105,6 +110,11 @@
 			'src/arm/sysv.S',
 			'src/arm/trampoline.S',
 		],
+
+		'platform_include_dirs':
+		[
+			'<@(libffi_public_headers_linux_armv7_dir)',
+		],
 	},
 	
 	'targets':
@@ -144,14 +154,16 @@
 			
 			'include_dirs':
 			[
-				'<@(_platform_include_dirs)',
+				#'<@(_platform_include_dirs)',
+				'<@(libffi_public_headers_linux_armv7_dir)',
 			],
 			
 			'direct_dependent_settings':
 			{
 				'include_dirs':
 				[
-					'<@(_platform_include_dirs)',
+					#'<@(_platform_include_dirs)',
+					'<@(libffi_public_headers_linux_armv7_dir)',
 				],
 			},
 			
@@ -234,6 +246,27 @@
 						[
 							'<@(libffi_linux_x86_source_files)',
 							'<@(libffi_generic_sources)'
+						],
+					},
+				],
+				[
+					'toolset_os == "linux" and toolset_arch == "armv7" ',
+					{
+						'platform_include_dirs':
+						[
+							'<@(libffi_public_headers_linux_armv7_dir)',
+						],
+						
+						'sources':
+						[
+							'<@(libffi_linux_arm_source_files)',
+							'<@(libffi_generic_sources)'
+						],
+						
+						# Disable VFP
+						'cflags':
+						[
+							'-U__ARM_EABI__',
 						],
 					},
 				],
